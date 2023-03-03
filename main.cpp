@@ -5,6 +5,8 @@
 #include <math.h>
 #include <array>
 
+#include "macro.h"
+
 // グローバル変数の宣言
 
 //プロセス管理変数
@@ -48,7 +50,7 @@ void initialize() { //初期化
     }
 
     //各処理をプロセスとして登録
-    processsPecifiedAdd(1001, "system/processManager", 10, "system/system_process");
+    processsPecifiedAdd(1001, SYS_PM, PER_SYSTEM, SYS_PUB);
 }
 
 void processManager() { //ProcessManagerの処理
