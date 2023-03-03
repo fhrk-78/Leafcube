@@ -70,7 +70,7 @@ void processManager() { //ProcessManagerの処理
     return;
 }
 
-//メイン処理
+//メイン処理を実行
 int main() {
     initialize();
     return 0;
