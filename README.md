@@ -1,2 +1,2 @@
 # Leafcube
-Pseudo-virtual operating environment
+開発中
