@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/_develop/Leafcube",
-      "program": "d:/_develop/Leafcube/build/Debug/outDebug",
+      "cwd": "g:/project/leafcube/Leafcube",
+      "program": "g:/project/leafcube/Leafcube/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
