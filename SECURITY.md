@@ -2,14 +2,8 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.0.0   | :white_check_mark: |
+[Here](https://github.com/forestrharumaki/Leafcube/wiki/Supported-Versions)
 
 ## Reporting a Vulnerability
 
 [Please here](mailto:haroodo.7@gmail.com)
-
-## Symbols
-
-:x: :white_check_mark:
