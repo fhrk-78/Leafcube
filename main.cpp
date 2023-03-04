@@ -190,15 +190,16 @@ void VFSManager() { //VFSManagerの処理
 void commandLine() { //コマンド入力の待機
     std::string inputCommandBefore = "";
     std::string inputCommand = "";
-    std::string inputCommandOption[10] = "";
+    std::string inputCommandOption[10];
     std::string nowDirectory = "/";
     int cmdNum = 0;
 
     while (true) {
+        for (auto i = 0; i < 10; ++i) {
+            inputCommandOption[i] = "";
+        }
         std::cout << nowDirectory << ">";
-        /*
-            Inputをここに入れる
-        */
+        std::getline(std::cin, inputCommandBefore);
 
         int j = 0;
         std::string k = "";
