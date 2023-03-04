@@ -24,16 +24,18 @@
 // グローバル変数の宣言
 
 //初期化
+bool quitNow = false;
 bool processManagerEnable = false;
-bool VFSEnable = false;
-bool VFSManagerEnable = false;
+bool OVFSEnable = false;
+bool OVFSManagerEnable = false;
 
 //プロセス管理変数
 std::string processName[PROCESS_MAX];
 int processAccesspermission[PROCESS_MAX];
 std::string processPublisher[PROCESS_MAX];
 
-//VFS管理変数
+//OVFS管理変数
+std::string OVFSver = "1.0.0";
 std::string filePath[FILE_MAX];
 int filePermission[FILE_MAX];
 bool fileIsDirectory[FILE_MAX];
@@ -81,7 +83,7 @@ int processRemove(int numloc) { //プロセスの正常削除
 }
 
 int mkdir(std::string filename, int filepermissions) { //ディレクトリの作成
-    if (VFSEnable == true && VFSManagerEnable == true) {
+    if (OVFSEnable == true && OVFSManagerEnable == true) {
         int i = 0;
         while (filePath[i] != "0") {
             i += 1;
@@ -100,7 +102,7 @@ int mkdir(std::string filename, int filepermissions) { //ディレクトリの�
 }
 
 int mkfile(std::string fileDirectory, std::string filename, int filepermissions, std::string inside) { //ファイルの作成(&書き込み)
-    if (VFSEnable == true && VFSManagerEnable == true) {
+    if (OVFSEnable == true && OVFSManagerEnable == true) {
         int i = 0;
         while (filePath[i] != "0") {
             i += 1;
@@ -129,7 +131,7 @@ int mkfile(std::string fileDirectory, std::string filename, int filepermissions,
 }
 
 int writefile(std::string paths, std::string inside) {
-    if (VFSEnable == true && VFSManagerEnable == true) {
+    if (OVFSEnable == true && OVFSManagerEnable == true) {
         int i = 0;
         while (filePath[i] != paths) {
             i += 1;
@@ -168,12 +170,12 @@ void initialize() { //初期化
     }
 
     processManagerEnable = true;
-    VFSEnable = true;
-    VFSManagerEnable = true;
+    OVFSEnable = true;
+    OVFSManagerEnable = true;
 
     //各処理をプロセスとして登録 100番台はシステムに予約されています
     processsPecifiedAdd(101, "system/processManager", 10, "system/system_process");
-    processsPecifiedAdd(102, "system/VFSManager", 10, "system/system_process");
+    processsPecifiedAdd(102, "system/OVFSManager", 10, "system/system_process");
 
     //システムファイルの作成
     mkdir("/system", 10);
@@ -183,7 +185,7 @@ void processManager() { //ProcessManagerの処理
     return;
 }
 
-void VFSManager() { //VFSManagerの処理
+void OVFSManager() { //OVFSManagerの処理
     return;
 }
 
@@ -195,6 +197,9 @@ void commandLine() { //コマンド入力の待機
     int cmdNum = 0;
 
     while (true) {
+        if (quitNow == true) {
+            break;
+        }
         for (auto i = 0; i < 10; ++i) {
             inputCommandOption[i] = "";
         }
@@ -218,24 +223,38 @@ void commandLine() { //コマンド入力の待機
 
         if (inputCommand == "pst") {
             cmdNum = 1;
-        }
+        } else
         if (inputCommand == "ps") {
             cmdNum = 2;
-        }
+        } else
         if (inputCommand == "pkill") {
             cmdNum = 3;
-        }
+        } else
         if (inputCommand == "padd") {
             cmdNum = 4;
-        }
+        } else
         if (inputCommand == "pperu") {
             cmdNum = 5;
-        }
+        } else
         if (inputCommand == "pperd") {
             cmdNum = 6;
+        } else
+        if (inputCommand == "plf") {
+            cmdNum = 7;
+        } else
+        if (inputCommand == "ovfss") {
+            cmdNum = 8;
+        }else
+        if (inputCommand == "quit") {
+            cmdNum = 9;
+        } else {
+            cmdNum = -1;
         }
 
         switch(cmdNum) {
+            case 0:
+                std::cout << "\033[31;100m Can't run this command.\nThis command is obsolete \033[m \n DEBUG: " << inputCommandOption[0] << " " << inputCommandOption[1] << "" << inputCommandOption[2] << " " << inputCommandOption[3] << std::endl;
+                break;
             case 1:
                 if (processManagerEnable == true) {
                     std::cout << "ProcessTable:" << std::endl;
@@ -257,7 +276,7 @@ void commandLine() { //コマンド入力の待機
                     }
                     std::cout << "Switch successful\n" << "\"ps\" to check status" << std::endl;
                 } else {
-                    std::cout << "ProcessManager: " << (processManagerEnable ? "Enabled" : "Disabled") << std::endl;
+                    std::cout << "ProcessManager:" << (processManagerEnable ? "\033[32m Enabled" : "\033[31m Disabled") << "\033[m" << std::endl;
                 }
                 break;
             case 3:
@@ -275,6 +294,7 @@ void commandLine() { //コマンド入力の待機
                 } else {
                     std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
                 }
+                break;
             case 5:
                 if (processManagerEnable == true) {
                     if (processAccesspermission[std::stoi(inputCommandOption[1])] >= 10) {
@@ -286,6 +306,7 @@ void commandLine() { //コマンド入力の待機
                 } else {
                     std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
                 }
+                break;
             case 6:
                 if (processManagerEnable == true) {
                     if (processAccesspermission[std::stoi(inputCommandOption[1])] >= 10) {
@@ -297,12 +318,49 @@ void commandLine() { //コマンド入力の待機
                 } else {
                     std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
                 }
+                break;
+            case 7:
+                if (processManagerEnable == true) {
+                    std::cout << "FindProcess:" << std::endl;
+                    for (auto i = 0; i < PROCESS_MAX; ++i) {
+                        if (processName[i] == inputCommandOption[1] || processAccesspermission[i] == std::stoi(inputCommandOption[1]) || processPublisher[i] == inputCommandOption[1]) {
+                            std::cout << STRCHR(processName[i]) << "(" << i << ") : " << STRCHR(processPublisher[i]) << " | " << processAccesspermission[i] << std::endl;
+                        }
+                    }
+                } else {
+                    std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
+                }
+                break;
+            case 8:
+                if (inputCommandOption[1] == "-v") {
+                    if (OVFSEnable == true) {
+                        OVFSEnable = false;
+                    } else {
+                        OVFSEnable = true;
+                    }
+                    std::cout << "Switch successful\n" << "\"ovfss\" to check status" << std::endl;
+                } else if (inputCommandOption[1] == "-m") {
+                    if (OVFSManagerEnable == true) {
+                        OVFSManagerEnable = false;
+                    } else {
+                        OVFSManagerEnable = true;
+                    }
+                    std::cout << "Switch successful\n" << "\"ovfss\" to check status" << std::endl;
+                } else {
+                    std::cout << "OVFSManager:" << (OVFSManagerEnable ? "\033[32m Enabled" : "\033[31m Disabled") << "\033[m" << std::endl;
+                    std::cout << "OnVirtualenvironmentFileSystem:" << (OVFSEnable ? "\033[32m Enabled" : "\033[31m Disabled") << "\033[m" << std::endl;
+                }
+                break;
+            case 9:
+                quitNow = true;
+                break;
             default:
                 std::cout << "\033[31;100m Can't find this command. \033[m \n DEBUG: " << inputCommandOption[0] << " " << inputCommandOption[1] << "" << inputCommandOption[2] << " " << inputCommandOption[3] << std::endl;
                 break;
         }
         printf("\n");
     }
+    return;
 }
 
 // メイン処理を実行
