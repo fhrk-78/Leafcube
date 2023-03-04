@@ -190,7 +190,7 @@ void OVFSManager() { //OVFSManagerの処理
     return;
 }
 
-void commandLine() { //コマンド入力の待機
+int commandLine() { //コマンド入力の待機
     std::string inputCommandBefore = "";
     std::string inputCommand = "";
     std::string inputCommandOption[10];
@@ -248,7 +248,7 @@ void commandLine() { //コマンド入力の待機
         }else
         if (inputCommand == "quit") {
             cmdNum = 9;
-        if (inputCommand == "mkf") {
+        } else if (inputCommand == "mkf") {
             cmdNum = 10;
         } else {
             cmdNum = -1;
@@ -369,12 +369,13 @@ void commandLine() { //コマンド入力の待機
         }
         printf("\n");
     }
-    return;
+    return 0;
 }
+    
 
-// メイン処理を実行
+
+// メイン処理を実行する
 int main() {
     initialize();
-    commandLine();
-    return 0;
+    return commandLine();
 }

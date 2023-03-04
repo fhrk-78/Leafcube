@@ -1,1 +1,1 @@
-del leafcube.exe & g++ -o leafcube main.cpp
+del leafcube.exe & windres icon.rc -O coff -o icon.res & g++ -o leafcube main.cpp icon.res
