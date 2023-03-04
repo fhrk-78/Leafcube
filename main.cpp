@@ -188,13 +188,32 @@ void VFSManager() { //VFSManagerの処理
 }
 
 void commandLine() { //コマンド入力の待機
+    std::string inputCommandBefore = "";
     std::string inputCommand = "";
-    std::string inputCommandOption = "";
+    std::string inputCommandOption[10] = "";
     std::string nowDirectory = "/";
     int cmdNum = 0;
+
     while (true) {
         std::cout << nowDirectory << ">";
-        scanf("%s %s", &inputCommand, &inputCommandOption);
+        /*
+            Inputをここに入れる
+        */
+
+        int j = 0;
+        std::string k = "";
+        for (auto i = 0;i < inputCommandBefore.length(); ++i) {
+            if (inputCommandBefore.substr(i, 1) == " ") {
+                inputCommandOption[j] = k;
+                k = "";
+                j += 1;
+            } else {
+                k += inputCommandBefore.substr(i, 1);
+            }
+        }
+        inputCommandOption[j] = k;
+
+        inputCommand = inputCommandOption[0];
 
         if (inputCommand == "pst") {
             cmdNum = 1;
@@ -229,7 +248,7 @@ void commandLine() { //コマンド入力の待機
                 }
                 break;
             case 2:
-                if (inputCommandOption == "-s") {
+                if (inputCommandOption[1] == "-s") {
                     if (processManagerEnable == true) {
                         processManagerEnable = false;
                     } else {
@@ -242,7 +261,7 @@ void commandLine() { //コマンド入力の待機
                 break;
             case 3:
                 if (processManagerEnable == true) {
-                    processRemove(std::stoi(inputCommandOption));
+                    processRemove(std::stoi(inputCommandOption[1]));
                     std::cout << "Process kill successful\n" << "\"pst\" to check all process" << std::endl;
                 } else {
                     std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
@@ -250,17 +269,17 @@ void commandLine() { //コマンド入力の待機
                 break;
             case 4:
                 if (processManagerEnable == true) {
-                    processAdd(inputCommandOption, 5, "user/");
+                    processAdd(inputCommandOption[1], std::stoi(inputCommandOption[2]), "user/" + inputCommandOption[3]);
                     std::cout << "Process add successful (Permission: \"5\", Publisher: \"user/\")\n" << "\"pst\" to check all process" << std::endl;
                 } else {
                     std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
                 }
             case 5:
                 if (processManagerEnable == true) {
-                    if (processAccesspermission[std::stoi(inputCommandOption)] >= 10) {
+                    if (processAccesspermission[std::stoi(inputCommandOption[1])] >= 10) {
                         std::cout << "\033[31;100m E: Permissions are already maxed \033[m" << std::endl;
                     } else {
-                        processAccesspermission[std::stoi(inputCommandOption)] += 1;
+                        processAccesspermission[std::stoi(inputCommandOption[1])] += 1;
                         std::cout << "Process permission upgrade successful\n" << "\"pst\" to check all process" << std::endl;
                     }
                 } else {
@@ -268,17 +287,17 @@ void commandLine() { //コマンド入力の待機
                 }
             case 6:
                 if (processManagerEnable == true) {
-                    if (processAccesspermission[std::stoi(inputCommandOption)] >= 10) {
+                    if (processAccesspermission[std::stoi(inputCommandOption[1])] >= 10) {
                         std::cout << "\033[31;100m E: Permissions are already minimaled \033[m" << std::endl;
                     } else {
-                        processAccesspermission[std::stoi(inputCommandOption)] -= 1;
+                        processAccesspermission[std::stoi(inputCommandOption[1])] -= 1;
                         std::cout << "Process permission downgrade successful\n" << "\"pst\" to check all process" << std::endl;
                     }
                 } else {
                     std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
                 }
             default:
-                std::cout << "\033[31;100m Can't find this command. \033[m" << std::endl;
+                std::cout << "\033[31;100m Can't find this command. \033[m \n DEBUG: " << inputCommandOption[0] << " " << inputCommandOption[1] << "" << inputCommandOption[2] << " " << inputCommandOption[3] << std::endl;
                 break;
         }
         printf("\n");

@@ -1,0 +1,1 @@
+del leafcube.exe & g++ -o leafcube main.cpp
