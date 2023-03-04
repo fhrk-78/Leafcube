@@ -371,8 +371,6 @@ int commandLine() { //コマンド入力の待機
     }
     return 0;
 }
-    
-
 
 // メイン処理を実行する
 int main() {
