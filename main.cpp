@@ -5,6 +5,12 @@
 #include <math.h>
 #include <array>
 
+// マクロ
+
+//定数
+#define PROCESS_MAX 512
+#define FILE_MAX 256
+
 // グローバル変数の宣言
 
 //初期化
@@ -13,23 +19,23 @@ bool VFSEnable = false;
 bool VFSManagerEnable = false;
 
 //プロセス管理変数
-std::string processName[512];
-int processAccesspermission[512];
-std::string processPublisher[512];
+std::string processName[PROCESS_MAX];
+int processAccesspermission[PROCESS_MAX];
+std::string processPublisher[PROCESS_MAX];
 
 //VFS管理変数
-std::string filePath[256];
-int filePermission[256];
-bool fileIsDirectory[256];
-std::string fileInside[256];
+std::string filePath[FILE_MAX];
+int filePermission[FILE_MAX];
+bool fileIsDirectory[FILE_MAX];
+std::string fileInside[FILE_MAX];
 
-//関数
+// 関数
 int processAdd(std::string name, int permission, std::string publisher) { //プロセスの追加
     if (processManagerEnable == true) {
         int i = 0;
         while (processName[i] != "0") {
             i += 1;
-            if (i > 512) {
+            if (i > PROCESS_MAX) {
                 return -1;
             }
         }
@@ -69,7 +75,7 @@ int mkdir(std::string filename, int filepermissions) { //ディレクトリの�
         int i = 0;
         while (filePath[i] != "0") {
             i += 1;
-            if (i > 256) {
+            if (i > FILE_MAX) {
                 return -1;
             }
         }
@@ -88,7 +94,7 @@ int mkfile(std::string fileDirectory, std::string filename, int filepermissions,
         int i = 0;
         while (filePath[i] != "0") {
             i += 1;
-            if (i > 256) {
+            if (i > FILE_MAX) {
                 return -1;
             }
         }
@@ -98,7 +104,7 @@ int mkfile(std::string fileDirectory, std::string filename, int filepermissions,
         fileInside[i] = inside;
         while (true) {
             i += 1;
-            if (i > 256) {
+            if (i > FILE_MAX) {
                 return -1;
             }
             if (filePath[i] == fileDirectory && fileIsDirectory[i] == true) {
@@ -117,7 +123,7 @@ int writefile(std::string paths, std::string inside) {
         int i = 0;
         while (filePath[i] != paths) {
             i += 1;
-            if (i > 256) {
+            if (i > FILE_MAX) {
                 return -1;
             }
         }
@@ -128,26 +134,26 @@ int writefile(std::string paths, std::string inside) {
     }
 }
 
-//処理メソッド
+// 処理メソッド
 void initialize() { //初期化
     //グローバル変数の初期化
-    for (auto i = 0; i < 512; ++i) {
+    for (auto i = 0; i < PROCESS_MAX; ++i) {
         processName[i] = "0";
     }
-    for (auto i = 0; i < 512; ++i) {
+    for (auto i = 0; i < PROCESS_MAX; ++i) {
         processAccesspermission[i] = 0;
     }
-    for (auto i = 0; i < 512; ++i) {
+    for (auto i = 0; i < PROCESS_MAX; ++i) {
         processPublisher[i] = "0";
     }
 
-    for (auto i = 0; i < 256; ++i) {
+    for (auto i = 0; i < FILE_MAX; ++i) {
         filePath[i] = "0";
     }
-    for (auto i = 0; i < 256; ++i) {
+    for (auto i = 0; i < FILE_MAX; ++i) {
         filePermission[i] = 0;
     }
-    for (auto i = 0; i < 256; ++i) {
+    for (auto i = 0; i < FILE_MAX; ++i) {
         fileIsDirectory[i] = false;
     }
 
@@ -182,7 +188,7 @@ void commandLine() { //コマンド入力の待機
     }
 }
 
-//メイン処理を実行
+// メイン処理を実行
 int main() {
     initialize();
     return 0;
