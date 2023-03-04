@@ -21,6 +21,7 @@ std::string processPublisher[512];
 std::string filePath[256];
 int filePermission[256];
 bool fileIsDirectory[256];
+std::string fileInside[256];
 
 //関数
 int processAdd(std::string name, int permission, std::string publisher) { //プロセスの追加
@@ -75,6 +76,53 @@ int mkdir(std::string filename, int filepermissions) { //ディレクトリの�
         filePath[i] = filename;
         filePermission[i] = filepermissions;
         fileIsDirectory[i] = true;
+        fileInside[i] = "";
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+int mkfile(std::string fileDirectory, std::string filename, int filepermissions, std::string inside) { //ファイルの作成(&書き込み)
+    if (VFSEnable == true && VFSManagerEnable == true) {
+        int i = 0;
+        while (filePath[i] != "0") {
+            i += 1;
+            if (i > 256) {
+                return -1;
+            }
+        }
+        filePath[i] = fileDirectory + "/" + filename;
+        filePermission[i] = filepermissions;
+        fileIsDirectory[i] = false;
+        fileInside[i] = inside;
+        while (true) {
+            i += 1;
+            if (i > 256) {
+                return -1;
+            }
+            if (filePath[i] == fileDirectory && fileIsDirectory[i] == true) {
+                fileInside[i] += filename + "\n";
+                break;
+            }
+        }
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+int writefile(std::string paths, std::string inside) {
+    if (VFSEnable == true && VFSManagerEnable == true) {
+        int i = 0;
+        while (filePath[i] != paths) {
+            i += 1;
+            if (i > 256) {
+                return -1;
+            }
+        }
+        fileInside[i] = inside;
+        return 0;
     } else {
         return -1;
     }
@@ -110,6 +158,9 @@ void initialize() { //初期化
     //各処理をプロセスとして登録
     processsPecifiedAdd(501, "system/processManager", 10, "system/system_process");
     processsPecifiedAdd(502, "system/VFSManager", 10, "system/system_process");
+
+    //システムファイルの作成
+    mkdir("/system", 10);
 }
 
 void processManager() { //ProcessManagerの処理
