@@ -248,6 +248,8 @@ void commandLine() { //コマンド入力の待機
         }else
         if (inputCommand == "quit") {
             cmdNum = 9;
+        if (inputCommand == "mkf") {
+            cmdNum = 10;
         } else {
             cmdNum = -1;
         }
@@ -354,6 +356,12 @@ void commandLine() { //コマンド入力の待機
                 break;
             case 9:
                 quitNow = true;
+                break;
+            case 10:
+                if (OVFSEnable == true && OVFSManagerEnable == true) {
+                    mkfile(inputCommandOption[1], inputCommandOption[2], std::stoi(inputCommandOption[3]), "");
+                    std::cout << "Make complete" << std::endl;
+                }
                 break;
             default:
                 std::cout << "\033[31;100m Can't find this command. \033[m \n DEBUG: " << inputCommandOption[0] << " " << inputCommandOption[1] << "" << inputCommandOption[2] << " " << inputCommandOption[3] << std::endl;
