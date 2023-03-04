@@ -11,6 +11,9 @@
 #define PROCESS_MAX 512
 #define FILE_MAX 256
 
+//関数
+#define STRCHR(x) x.c_str()
+
 // グローバル変数の宣言
 
 //初期化
@@ -179,11 +182,38 @@ void VFSManager() { //VFSManagerの処理
 
 void commandLine() { //コマンド入力の待機
     std::string inputCommand = "";
+    std::string inputCommandOption = "";
     std::string nowDirectory = "/";
+    int cmdNum = 0;
     while (true) {
         printf("%s", nowDirectory);
         printf(">");
-        scanf("%s", &inputCommand);
+        scanf("%s %s", &inputCommand, &inputCommandOption);
+
+        if (inputCommand == "pst") {
+            cmdNum = 1;
+        }
+        if (inputCommand == "ps") {
+            cmdNum = 2;
+        }
+
+        switch(cmdNum) {
+            case 1:
+                if (processManagerEnable == true) {
+                    puts("ProcessTable:");
+                    for (auto i = 0; i < PROCESS_MAX; ++i) {
+                        if (processName[i] != "0") {
+                            printf("%s : %s | %s\n", STRCHR(processName[i]), STRCHR(processPublisher[i]), processAccesspermission[i]);
+                        }
+                    }
+                } else {
+                    puts("E: ProcessManager isn't Enable.");
+                }
+                break;
+            case 2:
+                printf("ProcessManager: %s", processManagerEnable ? "Enabled" : "Disabled");
+                break;
+        }
         printf("\n");
     }
 }
