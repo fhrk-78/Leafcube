@@ -1,15 +1,22 @@
+/*
+
+こんなに汚いソースコードは初めて見たでしょう
+
+*/
+
 // include
 #include <stdio.h>
 #include <string>
 #include <iostream>
 #include <math.h>
 #include <array>
+#include <future>
 
 // マクロ
 
 //定数
-#define PROCESS_MAX 512
-#define FILE_MAX 256
+#define PROCESS_MAX 256
+#define FILE_MAX 512
 
 //関数
 #define STRCHR(x) x.c_str()
@@ -164,9 +171,9 @@ void initialize() { //初期化
     VFSEnable = true;
     VFSManagerEnable = true;
 
-    //各処理をプロセスとして登録
-    processsPecifiedAdd(501, "system/processManager", 10, "system/system_process");
-    processsPecifiedAdd(502, "system/VFSManager", 10, "system/system_process");
+    //各処理をプロセスとして登録 100番台はシステムに予約されています
+    processsPecifiedAdd(101, "system/processManager", 10, "system/system_process");
+    processsPecifiedAdd(102, "system/VFSManager", 10, "system/system_process");
 
     //システムファイルの作成
     mkdir("/system", 10);
@@ -186,8 +193,7 @@ void commandLine() { //コマンド入力の待機
     std::string nowDirectory = "/";
     int cmdNum = 0;
     while (true) {
-        printf("%s", nowDirectory);
-        printf(">");
+        std::cout << nowDirectory << ">";
         scanf("%s %s", &inputCommand, &inputCommandOption);
 
         if (inputCommand == "pst") {
@@ -196,22 +202,83 @@ void commandLine() { //コマンド入力の待機
         if (inputCommand == "ps") {
             cmdNum = 2;
         }
+        if (inputCommand == "pkill") {
+            cmdNum = 3;
+        }
+        if (inputCommand == "padd") {
+            cmdNum = 4;
+        }
+        if (inputCommand == "pperu") {
+            cmdNum = 5;
+        }
+        if (inputCommand == "pperd") {
+            cmdNum = 6;
+        }
 
         switch(cmdNum) {
             case 1:
                 if (processManagerEnable == true) {
-                    puts("ProcessTable:");
+                    std::cout << "ProcessTable:" << std::endl;
                     for (auto i = 0; i < PROCESS_MAX; ++i) {
                         if (processName[i] != "0") {
-                            printf("%s : %s | %s\n", STRCHR(processName[i]), STRCHR(processPublisher[i]), processAccesspermission[i]);
+                            std::cout << STRCHR(processName[i]) << "(" << i << ") : " << STRCHR(processPublisher[i]) << " | " << processAccesspermission[i] << std::endl;
                         }
                     }
                 } else {
-                    puts("E: ProcessManager isn't Enable.");
+                    std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
                 }
                 break;
             case 2:
-                printf("ProcessManager: %s", processManagerEnable ? "Enabled" : "Disabled");
+                if (inputCommandOption == "-s") {
+                    if (processManagerEnable == true) {
+                        processManagerEnable = false;
+                    } else {
+                        processManagerEnable = true;
+                    }
+                    std::cout << "Switch successful\n" << "\"ps\" to check status" << std::endl;
+                } else {
+                    std::cout << "ProcessManager: " << (processManagerEnable ? "Enabled" : "Disabled") << std::endl;
+                }
+                break;
+            case 3:
+                if (processManagerEnable == true) {
+                    processRemove(std::stoi(inputCommandOption));
+                    std::cout << "Process kill successful\n" << "\"pst\" to check all process" << std::endl;
+                } else {
+                    std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
+                }
+                break;
+            case 4:
+                if (processManagerEnable == true) {
+                    processAdd(inputCommandOption, 5, "user/");
+                    std::cout << "Process add successful (Permission: \"5\", Publisher: \"user/\")\n" << "\"pst\" to check all process" << std::endl;
+                } else {
+                    std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
+                }
+            case 5:
+                if (processManagerEnable == true) {
+                    if (processAccesspermission[std::stoi(inputCommandOption)] >= 10) {
+                        std::cout << "\033[31;100m E: Permissions are already maxed \033[m" << std::endl;
+                    } else {
+                        processAccesspermission[std::stoi(inputCommandOption)] += 1;
+                        std::cout << "Process permission upgrade successful\n" << "\"pst\" to check all process" << std::endl;
+                    }
+                } else {
+                    std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
+                }
+            case 6:
+                if (processManagerEnable == true) {
+                    if (processAccesspermission[std::stoi(inputCommandOption)] >= 10) {
+                        std::cout << "\033[31;100m E: Permissions are already minimaled \033[m" << std::endl;
+                    } else {
+                        processAccesspermission[std::stoi(inputCommandOption)] -= 1;
+                        std::cout << "Process permission downgrade successful\n" << "\"pst\" to check all process" << std::endl;
+                    }
+                } else {
+                    std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
+                }
+            default:
+                std::cout << "\033[31;100m Can't find this command. \033[m" << std::endl;
                 break;
         }
         printf("\n");
@@ -221,5 +288,6 @@ void commandLine() { //コマンド入力の待機
 // メイン処理を実行
 int main() {
     initialize();
+    commandLine();
     return 0;
 }
