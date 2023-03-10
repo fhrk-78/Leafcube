@@ -173,6 +173,7 @@ int commandLine() { //コマンド入力の待機
     std::string inputCommand = "";
     std::string inputCommandOption[10];
     std::string nowDirectory = "/";
+
     int cmdNum = 0;
 
     while (true) {
@@ -182,6 +183,7 @@ int commandLine() { //コマンド入力の待機
         for (auto i = 0; i < 10; ++i) {
             inputCommandOption[i] = "";
         }
+        
         std::cout << "\033[90m" << nowDirectory << ">";
         std::getline(std::cin, inputCommandBefore);
 
@@ -366,7 +368,7 @@ int commandLine() { //コマンド入力の待機
         }
         printf("\n");
     }
-    return 0;
+    std::cout << "\n";
 }
 
 // メイン処理を実行する

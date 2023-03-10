@@ -1,9 +1,9 @@
 // include
-#include <stdio.h>
+// 要らないのが含まれてるかも、、、
+//include <stdio.h>
 #include <string>
 #include <iostream>
-#include <math.h>
-#include <array>
-#include <future>
+//include <math.h>
+//include <array>
 
 #include "defines.h"
