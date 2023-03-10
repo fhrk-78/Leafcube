@@ -12,6 +12,7 @@
 #include <math.h>
 #include <array>
 #include <future>
+#include <stdlib.h>
 
 // マクロ
 
@@ -204,7 +205,7 @@ int commandLine() { //コマンド入力の待機
         for (auto i = 0; i < 10; ++i) {
             inputCommandOption[i] = "";
         }
-        std::cout << nowDirectory << ">";
+        std::cout << "\033[90m" << nowDirectory << ">";
         std::getline(std::cin, inputCommandBefore);
 
         int j = 0;
@@ -248,11 +249,20 @@ int commandLine() { //コマンド入力の待機
         }else
         if (inputCommand == "quit") {
             cmdNum = 9;
-        } else if (inputCommand == "mkf") {
+        } else
+        if (inputCommand == "mkf") {
             cmdNum = 10;
-        } else {
+        } else
+        if (inputCommand == "say") {
+            cmdNum = 11;
+        } else
+        if (inputCommand == "clr") {
+            cmdNum = 12;
+        } else
+        {
             cmdNum = -1;
         }
+        std::cout << "\033[m";
 
         switch(cmdNum) {
             case 0:
@@ -293,7 +303,7 @@ int commandLine() { //コマンド入力の待機
             case 4:
                 if (processManagerEnable == true) {
                     processAdd(inputCommandOption[1], std::stoi(inputCommandOption[2]), "user/" + inputCommandOption[3]);
-                    std::cout << "Process add successful (Permission: \"5\", Publisher: \"user/\")\n" << "\"pst\" to check all process" << std::endl;
+                    std::cout << "Process add successful (Permission: " << inputCommandOption[2] << ", Publisher: " << inputCommandOption[3] << ")\n" << "\"pst\" to check all process" << std::endl;
                 } else {
                     std::cout << "\033[31;100m E: ProcessManager isn't Enable. \033[m" << std::endl;
                 }
@@ -363,8 +373,18 @@ int commandLine() { //コマンド入力の待機
                     std::cout << "Make complete" << std::endl;
                 }
                 break;
+            case 11:
+                if (inputCommandOption[1].substr(0,1) == "%") {
+                    std::cout << "\e[1A" << inputCommandOption[1].substr(1) << "       " << std::endl;
+                } else {
+                std::cout << inputCommandOption[1] << std::endl;
+                }
+                break;
+            case 12:
+                system("cls");
+                break;
             default:
-                std::cout << "\033[31;100m Can't find this command. \033[m \n DEBUG: " << inputCommandOption[0] << " " << inputCommandOption[1] << "" << inputCommandOption[2] << " " << inputCommandOption[3] << std::endl;
+                std::cout << "\033[31;100m Can't find this command. \033[m" << std::endl;
                 break;
         }
         printf("\n");
