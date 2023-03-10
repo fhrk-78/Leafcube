@@ -168,14 +168,6 @@ void initialize() { //初期化
     mkdir("/system", 10);
 }
 
-void processManager() { //ProcessManagerの処理
-    return;
-}
-
-void OVFSManager() { //OVFSManagerの処理
-    return;
-}
-
 int commandLine() { //コマンド入力の待機
     std::string inputCommandBefore = "";
     std::string inputCommand = "";
