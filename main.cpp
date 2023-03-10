@@ -6,22 +6,7 @@
 */
 
 // include
-#include <stdio.h>
-#include <string>
-#include <iostream>
-#include <math.h>
-#include <array>
-#include <future>
-#include <stdlib.h>
-
-// マクロ
-
-//定数
-#define PROCESS_MAX 256
-#define FILE_MAX 512
-
-//関数
-#define STRCHR(x) x.c_str()
+#include "header/all.h"
 
 // グローバル変数の宣言
 
